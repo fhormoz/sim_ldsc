@@ -17,13 +17,14 @@ def main(parser):
 
 	print "final_ldsc_result_new/" + annot_name + "/*.results";
 	for simFiles in glob.glob("final_ldsc_result_new/" + annot_name + "/*.results"):
-		enr_est = np.loadtxt(simFiles,skiprows=2, usecols=(4,)); #TODO :change it for new annotation
+		frac_h2g, se_hg2, enr_est = np.loadtxt(simFiles,skiprows=3, usecols=(2,3,4,)); #TODO :change it for new annotation
 		#if(float(enr_est)>0):
-		ldsc_enr_est_list.append(float(enr_est));
+		if (float(frac_h2g) > float(se_hg2)):
+			ldsc_enr_est_list.append(float(enr_est));
 	print ldsc_enr_est_list;
 	rsID2beta = {};
 	rsID2frq  = {};
-	hapMapfrq = "/n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.frq"
+	hapMapfrq = "/groups/price/ldsc/reference_files/1000G_EUR_Phase3/plink_files/1000G.EUR.QC.1.frq"
 	hapMapfrqHandler = open(hapMapfrq);
 	hapMapfrqHandler.readline();
 	for snpdataHapMap in hapMapfrqHandler:
@@ -36,7 +37,7 @@ def main(parser):
 	hg2_common = est_var_snp_common = num_snp_genome_common = num_snp_annot_common = 0;
 	for simPath in glob.glob("simulated_data/sim*"):
 		rsID2beta = {};
-		colAnnont = 5; #TODO: change to 5 for 2 annotation. I change it to match the true
+		colAnnont = 6; #TODO: change to 5 for 2 annotation. I change it to match the true
 		hg2 = est_var_snp = num_snp_genome = num_snp_annot = 0;	
 		hg2_common = est_var_snp_common = num_snp_genome_common = num_snp_annot_common = 0;
 		simFileName = simPath.replace("simulated_data/", "");

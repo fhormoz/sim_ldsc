@@ -33,7 +33,7 @@ echo "Job ended on" `date`
 echo "------------------------------------------------------------------------"
 """
 
-Nsim = 400;
+Nsim = 1000;
 currentPath = os.getcwd();
 outFolder   = currentPath + "/simulated_data";
 logFolder   = currentPath + "/log/";

@@ -37,35 +37,25 @@ echo "------------------------------------------------------------------------"
 currentPath = os.getcwd();
 logFolder   = currentPath + "/log/";
 LDSCPath    = "/home/fh80/Code/LDSC/ldsc/" 
-outFolder   = "final_ldsc_result_new";
 
-if not os.path.exists(outFolder):
-        os.makedirs(outFolder);
-if not os.path.exists(outFolder + "/TopciseQTL"):
-        os.makedirs(outFolder + "/TopciseQTL");
+for simFiles in glob.glob(currentPath + "/annots/TrueQTLUKBioBankLD/*"):		#This is right, we use the same TrueeQTL .annot file but use different LD to make LDSC files
+	simFileName = simFiles.replace(currentPath + "/annots/TrueQTLUKBioBankLD/", "");
+	annotFileName=simFiles + "/" + "TrueQTLUKBioBankLD.1.annot"	
 
-for simFiles in glob.glob(currentPath + "/annots/TopciseQTL/*"):
-	print simFiles;
-	simFileName = simFiles.replace(currentPath + "/annots/TopciseQTL/", "");
-	annotFileName=simFiles + "/" + "TopciseQTL.1.annot"	
-
-	if os.path.exists(currentPath + "/" + outFolder +  "/TopciseQTL/" + simFileName + ".results"):
+	if (os.path.exists(simFiles + "/TrueQTLUKBioBankLD.1.l2.ldscore.gz")):
 		continue;
-	sumFiles = currentPath + "/simulated_data/SummaryStatistics/"+simFileName + ".sumstats";
+	else :
+		print simFiles;
+	
+	scriptfile = logFolder + "/qsub/GeneStat_" + str(simFileName);
+        logfile    = logFolder + "/log/GeneStat_"  + str(simFileName) + ".log";
+        errfile    = logFolder + "/err/GeneStat_"  + str(simFileName) + ".err";
 
-	scriptfile = logFolder + "/qsub/LDSC_" + str(simFileName);
-        logfile    = logFolder + "/log/LDSC_"  + str(simFileName) + ".log";
-        errfile    = logFolder + "/err/LDSC_"  + str(simFileName) + ".err";
-
-	#" --w-ld /groups/price/ldsc/reference_files/1000G_EUR_Phase3/weights/weights.hm3_noMHC.1" +\
-	script =  "python " + LDSCPath + "ldsc.py" +\
-                        " --h2 " + sumFiles +\
-                        " --ref-ld " + annotFileName.replace(".annot","") +\
-                        " --chisq-max 9999 --not-M-5-50 " +\
-                        " --w-ld /n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM.weights.hm3_noMHC.1" +\
-                        " --overlap-annot --print-cov --print-coefficients --print-delete-vals " +\
-                        " --out " + currentPath + "/" + outFolder +  "/TopciseQTL/" + simFileName + "\n";
-	print script;	
+	script = "python " + LDSCPath+ "ldsc.py" +\
+		" --l2 --bfile /n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_40000ind_GWAS.CM " +\
+		" --ld-wind-cm 1 --annot " + annotFileName +\
+		" --out " + annotFileName.replace(".annot","") +\
+		" --print-snps /home/fh80/Code/RunLDSC/list.txt";
 	scriptFILEHandler = open(scriptfile+'.qsub', 'wb');
 	scriptFILEHandler.write(TEMPLATE_SERIAL.format(script=script, name="LDSC", logfile=logfile, errfile=errfile, slots=1))
 	scriptFILEHandler.close();

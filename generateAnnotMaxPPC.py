@@ -38,14 +38,14 @@ def main(parser):
 	if not os.path.exists("annots/MaxPPC_CAVIAR/"+simFileName):
                 os.makedirs("annots/MaxPPC_CAVIAR/"+simFileName);
 
-	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.CM.bim", "r");
+	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM.bim", "r");
 	annotFileHandler = open(currentPath + "/" + "annots/MaxPPC_CAVIAR/"+simFileName + "/MaxPPC_CAVIAR.1.annot", "w");
 	annotFileHandler.write("CHR\tBP\tSNP\tCM\tANNOT1\tANNOT2\n");
 	for bimData in bimFileHandler:
 		data = bimData.split();
 		Annot = 0;
 		if (data[1] in allCausalSetCAVIAR):
-			Annot = 1;
+			Annot = allCausalSetCAVIAR[data[1]];
 		else:
 			Annot = 0;	
 		annotFileHandler.write(data[0] + "\t" + data[3] + "\t" + data[1] + "\t" + data[2] + "\t1\t" +  str(Annot) + "\n");

@@ -20,6 +20,12 @@ def main(parser):
 
 	allciseQTLSNP = [];
 	allciseQTLP   = [];
+	trueCausalSNP = [];
+	
+	for data in open(currentPath + "/simulated_data/" + simFileName +"/test_causalsnp.gwas"):
+		trueCausalSNP.append(data.split("\t")[0]);
+	print trueCausalSNP;
+	
 	for eQTLFiles in glob.glob(currentPath + "/simulated_data/" + simFileName + "/*_out.qassoc"):
 		if ("test_out.qassoc" in eQTLFiles):
 			continue;
@@ -37,22 +43,27 @@ def main(parser):
 
 	if not os.path.exists("annots"):
                 os.makedirs("annots")
-	if not os.path.exists("annots/allciseQTL"):
-                os.makedirs("annots/allciseQTL");
-	if not os.path.exists("annots/allciseQTL/"+simFileName):
-                os.makedirs("annots/allciseQTL/"+simFileName);
+	if not os.path.exists("annots/allciseQTLTrue"):
+                os.makedirs("annots/allciseQTLTrue");
+	if not os.path.exists("annots/allciseQTLTrue/"+simFileName):
+                os.makedirs("annots/allciseQTLTrue/"+simFileName);
 
-	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM.bim", "r");
-	annotFileHandler = open(currentPath + "/" + "annots/allciseQTL/"+simFileName + "/allciseQTL.1.annot", "w");
-	annotFileHandler.write("CHR\tBP\tSNP\tCM\tANNOT1\tANNOT2\n");
+	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.bim", "r");
+	annotFileHandler = open(currentPath + "/" + "annots/allciseQTLTrue/"+simFileName + "/allciseQTLTrue.1.annot", "w");
+	annotFileHandler.write("CHR\tBP\tSNP\tCM\tANNOT1\tANNOT2\tANNOT3\n");
 	for bimData in bimFileHandler:
 		data = bimData.split();
 		Annot = 0;
+		AnnotTrue = 0;
 		if (data[1] in allSigciseQTLSNP):
 			Annot = 1;
 		else:
-			Annot = 0;	
-		annotFileHandler.write(data[0] + "\t" + data[3] + "\t" + data[1] + "\t" + data[2] + "\t1\t" +  str(Annot) + "\n");
+			Annot = 0;
+		if (data[1] in trueCausalSNP):
+                        AnnotTrue = 1;
+                else:
+                        AnnotTrue = 0;
+		annotFileHandler.write(data[0] + "\t" + data[3] + "\t" + data[1] + "\t" + data[2] + "\t1\t" + str(AnnotTrue) + "\t" +  str(Annot) + "\n");
 	annotFileHandler.close();
 	bimFileHandler.close();
 	

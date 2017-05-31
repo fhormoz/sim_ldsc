@@ -31,7 +31,7 @@ def main(parser):
 	if not os.path.exists("annots/Set_CAVIAR/"+simFileName):
                 os.makedirs("annots/Set_CAVIAR/"+simFileName);
 
-	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.CM.bim", "r");
+	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM.bim", "r");
 	annotFileHandler = open(currentPath + "/" + "annots/Set_CAVIAR/"+simFileName + "/Set_CAVIAR.1.annot", "w");
 	annotFileHandler.write("CHR\tBP\tSNP\tCM\tANNOT1\tANNOT2\n");
 	for bimData in bimFileHandler:

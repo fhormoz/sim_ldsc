@@ -60,19 +60,24 @@ def main(parser):
 	snprsID = snpBedFamData[:,1]; 
 
 	##Generate the Causal variants for GWAS and eQTL
-	causalIndexList = [];
-	causalGeneList  = [];
+	causalIndexList  = [];
+	causalGeneList   = [];
+	allGeneListStart = [];
 	for data in open(geneBedFile):
 		fileds = data.split();
+		if (int(fileds[3]) in allGeneListStart):
+			continue;
 		indexStart = bisect(snpPos, int(fileds[3]) );
 		indexEnd   = bisect(snpPos, int(fileds[4]) );
 		if(indexStart < indexEnd):
-			causalIndex = np.random.randint(indexStart, indexEnd);
-		if(not (causalIndex in causalIndexList) ):
-			causalIndexList.append(causalIndex);
-			causalGeneList.append(Bed(fileds[3], fileds[4], snprsID[indexStart], snprsID[indexEnd]));
-	##MAKE THE SIMULATION DIRECTORY
-	
+			#causalIndex = np.random.randint(indexStart, indexEnd);
+			causalIndex = indexStart + 1;
+			if(not (causalIndex in causalIndexList) ):
+				causalIndexList.append(causalIndex);
+				causalGeneList.append(Bed(fileds[3], fileds[4], snprsID[indexStart], snprsID[indexEnd]));
+				allGeneListStart.append(int(fileds[3]));
+
+	##MAKE THE SIMULATION DIRECTORY	
 	currentPath = os.getcwd() + "/"+ outFolder;
 	os.chdir(currentPath);
 	if(not os.path.exists("sim" + simID)):
@@ -99,7 +104,7 @@ def main(parser):
 	COMMAND="";
 	command_index = 0;
 	for index, bedData in zip(causalIndexList, causalGeneList):
-		print str(simID) + "\t" + str(command_index);
+		print index, bedData, command_index;
 		eqtlFileName = ouputFileName + "_" + str(bedData) + "_causalsnp.eqtl";
 		eqtlCausalFile = open(eqtlFileName, "w");
 		eqtlCausalFile.write(snpBedFamData[index,1] + "\t" + str(np.random.normal(0,scale=np.sqrt(eqtlhg2))) + "\n" );

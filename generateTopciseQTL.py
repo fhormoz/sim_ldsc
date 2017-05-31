@@ -18,7 +18,7 @@ def main(parser):
 		if ("test_out.qassoc" in eQTLFiles):
 			continue;
 		else:
-			data  = np.genfromtxt(eQTLFiles, dtype="str", usecols=(1,8), skip_header=1);
+			data  = np.genfromtxt(eQTLFiles, dtype="str", usecols=(1,8), skip_header=1, missing_values='NA', filling_values='1');
 			index = np.argmin(map(float, data[:,1]));
 			TopciseQTL[data[index,0]] = 1;
 
@@ -29,7 +29,7 @@ def main(parser):
 	if not os.path.exists("annots/TopciseQTL/"+simFileName):
                 os.makedirs("annots/TopciseQTL/"+simFileName);
 
-	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.CM.bim", "r");
+	bimFileHandler = open("/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM.bim", "r");
 	annotFileHandler = open(currentPath + "/" + "annots/TopciseQTL/"+simFileName + "/TopciseQTL.1.annot", "w");
 	annotFileHandler.write("CHR\tBP\tSNP\tCM\tANNOT1\tANNOT2\n");
 	for bimData in bimFileHandler:

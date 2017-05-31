@@ -42,6 +42,10 @@ if not os.path.exists(logFolder):
 for sim in glob.glob(currentPath + "/simulated_data/sim*"):
 	simFilName = sim.replace(currentPath + "/simulated_data/", "");
 	print simFilName;
+
+	annotFile = currentPath + "/" + "annots/TopciseQTL/" + simFilName  + "/TopciseQTL.1.annot";
+	if(os.path.exists(annotFile)):
+                continue;
 	#python generateSimStatAnnot.py -f sim92 -p /groups/price/farhad/Simulation/simulated_data/
 	
 	scriptfile = logFolder + "/qsub/GeneStat_" + str(simFilName);

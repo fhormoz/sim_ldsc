@@ -23,8 +23,9 @@ def main(parser):
 	print outputPath + "/" + simFileName + ".sumstats";
 	outputFile.write("SNP\tCHISQ\tN\tZ\n");
 	for SNP, Nind, P in data:
-		Z = np.abs(norm.ppf(float(P)/2)); 
-		outputFile.write(SNP + "\t" + str(Z*Z) + "\t" + Nind + "\t" + str(Z) + "\n");
+		if(not P=='NA'):
+			Z = np.abs(norm.ppf(float(P)/2)); 
+			outputFile.write(SNP + "\t" + str(Z*Z) + "\t" + Nind + "\t" + str(Z) + "\n");
 	outputFile.close();
 
 	TopciseQTL = {};
@@ -32,7 +33,7 @@ def main(parser):
 		if ("test_out.qassoc" in eQTLFiles):
 			continue;
 		else:
-			data  = np.genfromtxt(eQTLFiles, dtype="str", usecols=(1,8), skip_header=1);
+			data  = np.genfromtxt(eQTLFiles, dtype="str", usecols=(1,8), skip_header=1, missing_values="NA", filling_values="1");
 			index = np.argmin(map(float, data[:,1]));
 			TopciseQTL[data[index,0]] = 1;
 
@@ -43,7 +44,7 @@ def main(parser):
 	if not os.path.exists("annots/TopciseQTL/"+simFileName):
                 os.makedirs("annots/TopciseQTL/"+simFileName);
 
-	bimFileHandler = open("/groups/price/ldsc/reference_files/1000G_EUR_Phase3/plink_files/1000G.EUR.QC.1.bim", "r");
+	bimFileHandler = open("//n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.bim", "r");
 	annotFileHandler = open(currentPath + "/" + "annots/TopciseQTL/"+simFileName + "/TopciseQTL.1.annot", "w");
 	annotFileHandler.write("CHR\tBP\tSNP\tCM\tANNOT1\tANNOT2\n");
 	for bimData in bimFileHandler:

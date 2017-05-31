@@ -39,6 +39,12 @@ class Bed(object):
 	def __repr__(self):
 		return str(self.start) + "_" + str(self.end);
 
+def resubmitScript2Orchestra(scriptfile,jobId):
+	scriptfile = "log/" + str(jobId) + '.qsub';
+        logfile = "log/" + str(jobId) + '.log';
+        errfile = "log/" + str(jobId) + '.err';
+        subprocess.call('bsub < ' + scriptfile, shell=True);
+	
 def submitScript2Orchestra(script, jobId):
 	scriptfile = "log/" + str(jobId) + '.qsub';
 	scriptFILEHandler = open(scriptfile, 'wb');
@@ -55,7 +61,7 @@ def main(parser):
 	simID = options.simID;
 	outFolder = options.outFolder;
 	geneBedFile = "/groups/price/farhad/Data/Genes/Wright_chr1_genePos.bed";
-	snpBedFileFam = "/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_40000ind_GWAS.CM.bim";
+	snpBedFileFam = "/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000/UKBioBank_chr_40000ind_GWASQC.bim";
 	
 	currentPath = os.getcwd() + "/"+ outFolder;
 	os.chdir(currentPath);
@@ -63,16 +69,16 @@ def main(parser):
 		os.makedirs("sim" + simID);
 		os.makedirs(currentPath + "/sim" + simID + "/log");
 	os.chdir(currentPath + "/sim" + simID);	
-	print currentPath + "/sim" + simID;
+	print currentPath + "/sim" + simID + "/log";
 	
 	PLINK_PATH = "/opt/plink2-1.90b3/bin/plink" 
 	GCTA_PATH  = "/groups/price/farhad/Software/gcta/binary/gcta64";
-	eqtlPlinkFile = "/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM"
+	eqtlPlinkFile = "/n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000/UKBioBank_chr_500ind_eQTLQC"
 
 	##RUN GCTA to generate the GWAS phenotype
 	COMMAND="";
 	command_index = 10000000;
-	for logFile in glob.glob("*.log"):
+	for logFile in glob.glob("log/*.log"):
 		failedCOMMAND = "";
 		erroFlag = False;
 		for data in open(logFile):
@@ -100,6 +106,12 @@ def main(parser):
 			COMMAND += PLINK_PATH + failedCOMMAND + "\n";
 	
 	submitScript2Orchestra(COMMAND, command_index);
+
+	for qsubFile in glob.glob("log/*.qsub"):
+		if(not os.path.exists(qsubFile.replace(".qsub",".err"))):
+			jobId = qsubFile.replace(".qsub","").replace("log/","");
+			print jobId;
+			resubmitScript2Orchestra(qsubFile, jobId);	
 
 if __name__ == "__main__":
         parser = optparse.OptionParser("usage: %prog [options] ")

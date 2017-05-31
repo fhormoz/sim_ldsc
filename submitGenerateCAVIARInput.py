@@ -18,7 +18,7 @@ TEMPLATE_SERIAL = """
 #####################################
 #!/bin/bash
 #BSUB -n 1                #each  job run on 1 core
-#BSUB -W 05:00            #job run 5 hour
+#BSUB -W 09:00            #job run 9 hour
 #BSUB -J {name}
 #BSUB -o {logfile}        #lsf output file
 #BSUB -e {errfile}        #lsf error file

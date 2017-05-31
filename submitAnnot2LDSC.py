@@ -38,17 +38,21 @@ currentPath = os.getcwd();
 logFolder   = currentPath + "/log/";
 LDSCPath    = "/home/fh80/Code/LDSC/ldsc/" 
 
-for simFiles in glob.glob(currentPath + "/annots/MaxPPC_CAVIAR/*"):
-	print simFiles;
-	simFileName = simFiles.replace(currentPath + "/annots/MaxPPC_CAVIAR/", "");
-	annotFileName=simFiles + "/" + "MaxPPC_CAVIAR.1.annot"	
+for simFiles in glob.glob(currentPath + "/annots/TopciseQTL/*"):
+	simFileName = simFiles.replace(currentPath + "/annots/TopciseQTL/", "");
+	annotFileName=simFiles + "/" + "TopciseQTL.1.annot"	
 
+	if (os.path.exists(simFiles + "/TopciseQTL.1.l2.ldscore.gz")):
+		continue;
+	else :
+		print simFiles;
+	
 	scriptfile = logFolder + "/qsub/GeneStat_" + str(simFileName);
         logfile    = logFolder + "/log/GeneStat_"  + str(simFileName) + ".log";
         errfile    = logFolder + "/err/GeneStat_"  + str(simFileName) + ".err";
 
 	script = "python " + LDSCPath+ "ldsc.py" +\
-		" --l2 --bfile //n/scratch2/fh80/UKBioBank_SimulatedData/1000G/1000G.EUR.QC.1.CM" +\
+		" --l2 --bfile /n/scratch2/fh80/UKBioBank_SimulatedData/UKBiobank/500_40000_HapMapCommon/UKBioBank_chr_500ind_eQTL.CM " +\
 		" --ld-wind-cm 1 --annot " + annotFileName +\
 		" --out " + annotFileName.replace(".annot","") +\
 		" --print-snps /home/fh80/Code/RunLDSC/list.txt";
